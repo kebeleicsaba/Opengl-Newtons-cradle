@@ -9,6 +9,7 @@ import numpy
 import pyrr
 from PIL import Image
 from cubemap.SkyBox import SkyBox
+from cradleElement.CradleElement import CradleElement
 from texture.Texture import Texture
 from Camera import Camera
 
@@ -221,6 +222,7 @@ def renderModel(vao, vertCount, shapeType):
 
 
 	# Kirajzoljuk a buffert, a 0. vertextol kezdve, 24-et ( a kockanak 6 oldala van, minden oldalhoz 4 csucs).
+	
 	glDrawArrays(shapeType, 0, vertCount)
 
 perspMat = pyrr.matrix44.create_perspective_projection_matrix(45.0, 1280.0 / 720.0, 0.1, 100.0)
@@ -459,7 +461,8 @@ perspMat = pyrr.matrix44.create_perspective_projection_matrix(45.0, 1280.0 / 720
 # Atadjuk az eloallitott matrixot a shader-ben levo 'projection' matrixnak
 glUniformMatrix4fv(perspectiveLocation, 1, GL_FALSE, perspMat)
 
-cube = createObject(shader)
+#cube = createObject(shader)
+c = CradleElement(0, 0, 0, 20, 10, 10)
 
 
 viewMat = pyrr.matrix44.create_look_at([0.0, 0.0, 0.0], [0.0, 0.0, -1.0], [0.0, 1.0, 0.0])
@@ -488,6 +491,7 @@ while not glfw.window_should_close(window) and not exitProgram:
 	#rotMat = pyrr.matrix44.multiply(rotMatY, rotMatX)
 	#modelMat = pyrr.matrix44.multiply(rotMat, transMat)
 	skyBox.render(perspMat, camera.getMatrixForCubemap() )
+	c.render(camera, perspMat)
 
 	glUseProgram(shader)
 	# Innentol kezdve ezekre se lesz szukseg, megoldjuk mashogy:
@@ -526,7 +530,7 @@ while not glfw.window_should_close(window) and not exitProgram:
 	skybox_loc = glGetUniformLocation(shader, "skybox")
 	glUniform1i(skybox_loc, 0)
 	skyBox.activateCubeMap(shader, 1)
-	renderModel(cube, vertCount, shapeType)
+	#renderModel(cube, vertCount, shapeType)
 
 	glfw.swap_buffers(window)
 	
