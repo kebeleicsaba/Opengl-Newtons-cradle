@@ -18,10 +18,8 @@ class Sphere:
     		OpenGL.GL.shaders.compileShader(fragment_shader, GL_FRAGMENT_SHADER)
 		    )
 
-    def __init__(self, radius:int, x, y, z) -> None:
+    def __init__(self, radius:int, z:int) -> None:
         self.radius = radius
-        self.x = x 
-        self.y = y
         self.z = z
         vertices = self.createSphere(50, 50)
         vertices = numpy.array(vertices, dtype=numpy.float32)
@@ -70,7 +68,7 @@ class Sphere:
                 vertList.extend(vert4)
         return vertList
 
-    def render(self, camera, projectionMatrix):
+    def render(self, camera, projectionMatrix, x, y):
         glUseProgram(self.shader)
         
         proj_loc = glGetUniformLocation(self.shader, 'projection');
@@ -96,7 +94,7 @@ class Sphere:
         Texture.enableTexturing()
         self.texture.activate()
 
-        transMat = pyrr.matrix44.create_from_translation(pyrr.Vector3([self.x, self.y, self.z]))
+        transMat = pyrr.matrix44.create_from_translation(pyrr.Vector3([x, y, self.z]))
         glUniformMatrix4fv(world_loc, 1, GL_FALSE, transMat)
 
         glDrawArrays(GL_QUADS, 0, self.sphereVertCount)

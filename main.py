@@ -472,11 +472,17 @@ CradleStanchion3 = CradleElement(23.5, 1.9, -8.5, 1, 20, 1)
 CradleStanchion4 = CradleElement(0.5, 1.9, -8.5, 1, 20, 1)
 CradleStanchion5 = CradleElement(0.5, 21, -0.5, 24, 1, 1)
 CradleStanchion6 = CradleElement(0.5, 21, -8.5, 24, 1, 1)
+#CradleStanchion7 = CradleElement(6.5, 21, -5, 2, 2, 2)
 
 # Init Spheres
 NUMBER_OF_SPHERES = 4
 SPHERE_R = 2
-spheres = [Sphere(2, 2.5 + (i+1) * (SPHERE_R*2), 8, -5) for i in range(NUMBER_OF_SPHERES)] 
+spheres = [
+	{"sphere": Sphere(2, -5),
+	 "x": 6.5 + i * (SPHERE_R*2),
+	 "y": 8,
+	 "rot_x": 6.5 + i * (SPHERE_R*2),
+	 "rot_y": 21} for i in range(NUMBER_OF_SPHERES)] 
 
 
 def cradleRender() -> None:
@@ -519,7 +525,9 @@ while not glfw.window_should_close(window) and not exitProgram:
 	skyBox.render(perspMat, camera.getMatrixForCubemap())
 	cradleRender()
 	for s in spheres:
-		s.render(camera, perspMat)
+		x = 14 * math.cos(angle*2*math.pi/32) + s["rot_x"]
+		y = 14 * math.sin(angle*2*math.pi/32) + s["rot_y"]
+		s["sphere"].render(camera, perspMat, x, y)
 
 
 	glUseProgram(shader)
@@ -545,7 +553,7 @@ while not glfw.window_should_close(window) and not exitProgram:
 	#glTranslatef(0, 0, -50)
 	#glScalef(0.1, 0.1, 0.1)
 	#glRotatef(angle, 1, 1, 1)
-	angle += 1
+	angle += 0.04
 
 	glUniform3f(viewPos_loc, camera.x, camera.y, camera.z )	
 
