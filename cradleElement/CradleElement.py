@@ -29,22 +29,22 @@ class CradleElement:
         vertices = [
             0,  ySize,   0,  0, 1, 0, 0, 0,
 	        xSize,  ySize,   0,  0, 1, 0, 0, 1,
-			xSize,  ySize, -ySize,  0, 1, 0, 1, 1,
-			0,  ySize, -ySize,  0, 1, 0, 1, 0,
+			xSize,  ySize, -zSize,  0, 1, 0, 1, 1,
+			0,  ySize, -zSize,  0, 1, 0, 1, 0,
 
 			0, 0,   0,  0, -1, 0, 0, 0,
 			xSize, 0,   0,  0, -1, 0, 0, 1,
-			xSize, 0, -ySize,  0, -1, 0, 1, 1,
-			0, 0, -ySize,  0, -1, 0, 1, 0,
+			xSize, 0, -zSize,  0, -1, 0, 1, 1,
+			0, 0, -zSize,  0, -1, 0, 1, 0,
 
 			xSize,  0,   0,  1, 0, 0, 0, 0,
-			xSize,  0, -ySize,  1, 0, 0, 0, 1,
-			xSize, ySize, -ySize,  1, 0, 0, 1, 1,
+			xSize,  0, -zSize,  1, 0, 0, 0, 1,
+			xSize, ySize, -zSize,  1, 0, 0, 1, 1,
 			xSize, ySize,   0,  1, 0, 0, 1, 0,
 
 			0,  0,   0, -1, 0, 0, 0, 0,
-			0,  0, -ySize, -1, 0, 0, 0, 1,
-			0, ySize, -ySize, -1, 0, 0, 1, 1,
+			0,  0, -zSize, -1, 0, 0, 0, 1,
+			0, ySize, -zSize, -1, 0, 0, 1, 1,
 			0, ySize,   0, -1, 0, 0, 1, 0,
 
 			0,  0,   0, 0, 0, 1, 0, 0,
@@ -52,10 +52,10 @@ class CradleElement:
 			xSize, ySize,  0, 0, 0, 1, 1, 1,
 			0,  ySize,  0, 0, 0, 1, 1, 0,
 
-			0,  0,  -ySize,  0, 0, -1, 0, 0,
-			xSize, 0,  -ySize,  0, 0, -1, 0, 1,
-			xSize, ySize, -ySize,  0, 0, -1, 1, 1,
-			0, ySize, -ySize,   0, 0, -1, 1, 0
+			0,  0,  -zSize,  0, 0, -1, 0, 0,
+			xSize, 0,  -zSize,  0, 0, -1, 0, 1,
+			xSize, ySize, -zSize,  0, 0, -1, 1, 1,
+			0, ySize, -zSize,   0, 0, -1, 1, 0
             
             ]
 
@@ -100,5 +100,7 @@ class CradleElement:
         glDrawArrays(GL_QUADS, 0, 24)
 
         glBindBuffer(GL_ARRAY_BUFFER, 0)
+
+        
 
             

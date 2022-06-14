@@ -462,7 +462,8 @@ perspMat = pyrr.matrix44.create_perspective_projection_matrix(45.0, 1280.0 / 720
 glUniformMatrix4fv(perspectiveLocation, 1, GL_FALSE, perspMat)
 
 #cube = createObject(shader)
-c = CradleElement(0, 0, 0, 20, 10, 10)
+CradleBase = CradleElement(0, 0, 0, 25, 2, 10)
+CradleStanchion1 = CradleElement(0.5, 1.9, -0.5, 2, 20, 2)
 
 
 viewMat = pyrr.matrix44.create_look_at([0.0, 0.0, 0.0], [0.0, 0.0, -1.0], [0.0, 1.0, 0.0])
@@ -491,7 +492,8 @@ while not glfw.window_should_close(window) and not exitProgram:
 	#rotMat = pyrr.matrix44.multiply(rotMatY, rotMatX)
 	#modelMat = pyrr.matrix44.multiply(rotMat, transMat)
 	skyBox.render(perspMat, camera.getMatrixForCubemap() )
-	c.render(camera, perspMat)
+	CradleBase.render(camera, perspMat)
+	CradleStanchion1.render(camera, perspMat)
 
 	glUseProgram(shader)
 	# Innentol kezdve ezekre se lesz szukseg, megoldjuk mashogy:
