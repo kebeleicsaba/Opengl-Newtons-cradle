@@ -10,6 +10,7 @@ import pyrr
 from PIL import Image
 from cubemap.SkyBox import SkyBox
 from cradleElement.CradleElement import CradleElement
+from sphere.Sphere import Sphere
 from texture.Texture import Texture
 from Camera import Camera
 
@@ -472,6 +473,12 @@ CradleStanchion4 = CradleElement(0.5, 1.9, -8.5, 1, 20, 1)
 CradleStanchion5 = CradleElement(0.5, 21, -0.5, 24, 1, 1)
 CradleStanchion6 = CradleElement(0.5, 21, -8.5, 24, 1, 1)
 
+# Init Spheres
+NUMBER_OF_SPHERES = 4
+SPHERE_R = 2
+spheres = [Sphere(2, 2.5 + (i+1) * (SPHERE_R*2), 8, -5) for i in range(NUMBER_OF_SPHERES)] 
+
+
 def cradleRender() -> None:
 	CradleBase.render(camera, perspMat)
 	CradleStanchion1.render(camera, perspMat)
@@ -511,6 +518,9 @@ while not glfw.window_should_close(window) and not exitProgram:
 	# Render
 	skyBox.render(perspMat, camera.getMatrixForCubemap())
 	cradleRender()
+	for s in spheres:
+		s.render(camera, perspMat)
+
 
 	glUseProgram(shader)
 	# Innentol kezdve ezekre se lesz szukseg, megoldjuk mashogy:
