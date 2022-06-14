@@ -462,8 +462,24 @@ perspMat = pyrr.matrix44.create_perspective_projection_matrix(45.0, 1280.0 / 720
 glUniformMatrix4fv(perspectiveLocation, 1, GL_FALSE, perspMat)
 
 #cube = createObject(shader)
+
+# Init Cradle
 CradleBase = CradleElement(0, 0, 0, 25, 2, 10)
-CradleStanchion1 = CradleElement(0.5, 1.9, -0.5, 2, 20, 2)
+CradleStanchion1 = CradleElement(0.5, 1.9, -0.5, 1, 20, 1)
+CradleStanchion2 = CradleElement(23.5, 1.9, -0.5, 1, 20, 1)
+CradleStanchion3 = CradleElement(23.5, 1.9, -8.5, 1, 20, 1)
+CradleStanchion4 = CradleElement(0.5, 1.9, -8.5, 1, 20, 1)
+CradleStanchion5 = CradleElement(0.5, 21, -0.5, 24, 1, 1)
+CradleStanchion6 = CradleElement(0.5, 21, -8.5, 24, 1, 1)
+
+def cradleRender() -> None:
+	CradleBase.render(camera, perspMat)
+	CradleStanchion1.render(camera, perspMat)
+	CradleStanchion2.render(camera, perspMat)
+	CradleStanchion3.render(camera, perspMat)
+	CradleStanchion4.render(camera, perspMat)
+	CradleStanchion5.render(camera, perspMat)
+	CradleStanchion6.render(camera, perspMat)
 
 
 viewMat = pyrr.matrix44.create_look_at([0.0, 0.0, 0.0], [0.0, 0.0, -1.0], [0.0, 1.0, 0.0])
@@ -491,9 +507,10 @@ while not glfw.window_should_close(window) and not exitProgram:
 	#rotMatX = pyrr.matrix44.create_from_x_rotation(math.radians(angle))
 	#rotMat = pyrr.matrix44.multiply(rotMatY, rotMatX)
 	#modelMat = pyrr.matrix44.multiply(rotMat, transMat)
-	skyBox.render(perspMat, camera.getMatrixForCubemap() )
-	CradleBase.render(camera, perspMat)
-	CradleStanchion1.render(camera, perspMat)
+
+	# Render
+	skyBox.render(perspMat, camera.getMatrixForCubemap())
+	cradleRender()
 
 	glUseProgram(shader)
 	# Innentol kezdve ezekre se lesz szukseg, megoldjuk mashogy:
