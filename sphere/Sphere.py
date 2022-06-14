@@ -18,9 +18,13 @@ class Sphere:
     		OpenGL.GL.shaders.compileShader(fragment_shader, GL_FRAGMENT_SHADER)
 		    )
 
-    def __init__(self, radius:int, z:int) -> None:
+    def __init__(self, radius:int, z:int, lightX, lightY, lightZ) -> None:
         self.radius = radius
         self.z = z
+        self.lightX = lightX 
+        self.lightY = lightY 
+        self.lightZ = lightZ
+
         vertices = self.createSphere(50, 50)
         vertices = numpy.array(vertices, dtype=numpy.float32)
         self.sphereVertCount = int(len(vertices) / 6)
@@ -71,6 +75,30 @@ class Sphere:
     def render(self, camera, projectionMatrix, x, y):
         glUseProgram(self.shader)
         
+        materialAmbientColor_loc = glGetUniformLocation(self.shader, "materialAmbientColor")
+        materialDiffuseColor_loc = glGetUniformLocation(self.shader, "materialDiffuseColor")
+        materialSpecularColor_loc = glGetUniformLocation(self.shader, "materialSpecularColor")
+        materialEmissionColor_loc = glGetUniformLocation(self.shader, "materialEmissionColor")
+        materialShine_loc = glGetUniformLocation(self.shader, "materialShine")
+        glUniform3f(materialAmbientColor_loc, 0.25, 0.25, 0.25)
+        glUniform3f(materialDiffuseColor_loc, 0.4, 0.4, 0.4)
+        glUniform3f(materialSpecularColor_loc, 0.774597, 0.774597, 0.774597)
+        glUniform3f(materialEmissionColor_loc, 0.0, 0.0, 0.0)
+        glUniform1f(materialShine_loc, 76.8)
+
+        lightAmbientColor_loc = glGetUniformLocation(self.shader, "lightAmbientColor")
+        lightDiffuseColor_loc = glGetUniformLocation(self.shader, "lightDiffuseColor")
+        lightSpecularColor_loc = glGetUniformLocation(self.shader, "lightSpecularColor")
+
+        glUniform3f(lightAmbientColor_loc, 1.0, 1.0, 1.0)
+        glUniform3f(lightDiffuseColor_loc, 1.0, 1.0, 1.0)
+        glUniform3f(lightSpecularColor_loc, 1.0, 1.0, 1.0)
+
+        lightPos_loc = glGetUniformLocation(self.shader, 'lightPos')
+        viewPos_loc = glGetUniformLocation(self.shader, 'viewPos')
+        glUniform3f(lightPos_loc, self.lightX, self.lightY, self.lightZ)
+        glUniform3f(viewPos_loc, camera.x, camera.y, camera.z)
+
         proj_loc = glGetUniformLocation(self.shader, 'projection');
         view_loc = glGetUniformLocation(self.shader, 'view');
         world_loc = glGetUniformLocation(self.shader, 'world');

@@ -112,8 +112,8 @@ shader = OpenGL.GL.shaders.compileProgram(
 
 exitProgram = False
 
-skyBox = SkyBox("./images/bg.jpg", "./images/bg.jpg", "./images/bg.jpg", 
-				"./images/bg.jpg", "./images/bg.jpg", "./images/bg.jpg")
+skyBox = SkyBox("./images/right.jpg", "./images/left.jpg", "./images/top.jpg", 
+				"./images/bottom.jpg", "./images/front.jpg", "./images/back.jpg")
 
 texture = glGenTextures(1)
 glBindTexture(GL_TEXTURE_2D, texture)
@@ -233,10 +233,13 @@ perspMat = pyrr.matrix44.create_perspective_projection_matrix(45.0, 1280.0 / 720
 glUseProgram(shader)
 
 
+lightX = -200.0
+lightY = 200.0
+lightZ = 100.0
 lightPos_loc = glGetUniformLocation(shader, 'lightPos');
 viewPos_loc = glGetUniformLocation(shader, 'viewPos');
 
-glUniform3f(lightPos_loc, -200.0, 200.0, 100.0)
+glUniform3f(lightPos_loc, lightX, lightY, lightZ)
 glUniform3f(viewPos_loc, camera.x, camera.y, camera.z )
 
 materialAmbientColor_loc = glGetUniformLocation(shader, "materialAmbientColor")
@@ -465,20 +468,20 @@ glUniformMatrix4fv(perspectiveLocation, 1, GL_FALSE, perspMat)
 #cube = createObject(shader)
 
 # Init Cradle
-CradleBase = CradleElement(0, 0, 0, 25, 2, 10)
-CradleStanchion1 = CradleElement(0.5, 1.9, -0.5, 1, 20, 1)
-CradleStanchion2 = CradleElement(23.5, 1.9, -0.5, 1, 20, 1)
-CradleStanchion3 = CradleElement(23.5, 1.9, -8.5, 1, 20, 1)
-CradleStanchion4 = CradleElement(0.5, 1.9, -8.5, 1, 20, 1)
-CradleStanchion5 = CradleElement(0.5, 21, -0.5, 24, 1, 1)
-CradleStanchion6 = CradleElement(0.5, 21, -8.5, 24, 1, 1)
+CradleBase = CradleElement(0, 0, 0, 25, 2, 10, lightX, lightY, lightZ)
+CradleStanchion1 = CradleElement(0.5, 1.9, -0.5, 1, 20, 1, lightX, lightY, lightZ)
+CradleStanchion2 = CradleElement(23.5, 1.9, -0.5, 1, 20, 1, lightX, lightY, lightZ)
+CradleStanchion3 = CradleElement(23.5, 1.9, -8.5, 1, 20, 1, lightX, lightY, lightZ)
+CradleStanchion4 = CradleElement(0.5, 1.9, -8.5, 1, 20, 1, lightX, lightY, lightZ)
+CradleStanchion5 = CradleElement(0.5, 21, -0.5, 24, 1, 1, lightX, lightY, lightZ)
+CradleStanchion6 = CradleElement(0.5, 21, -8.5, 24, 1, 1, lightX, lightY, lightZ)
 #CradleStanchion7 = CradleElement(6.5, 21, -5, 2, 2, 2)
 
 # Init Spheres
 NUMBER_OF_SPHERES = 4
 SPHERE_R = 2
 spheres = [
-	{"sphere": Sphere(2, -5),
+	{"sphere": Sphere(2, -5, lightX, lightY, lightZ),
 	 "x": 6.5 + i * (SPHERE_R*2),
 	 "y": 8,
 	 "rot_x": 6.5 + i * (SPHERE_R*2),
@@ -529,6 +532,8 @@ while not glfw.window_should_close(window) and not exitProgram:
 		y = 14 * math.sin(angle*2*math.pi/32) + s["rot_y"]
 		s["sphere"].render(camera, perspMat, x, y)
 
+	# Ez a world helyett
+	pyrr.matrix44.create_identity()
 
 	glUseProgram(shader)
 	# Innentol kezdve ezekre se lesz szukseg, megoldjuk mashogy:
