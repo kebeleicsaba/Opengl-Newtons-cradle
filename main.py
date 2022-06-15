@@ -1,17 +1,15 @@
 import os
-from enum import Enum
 import glfw
 from OpenGL.GL import *
 from OpenGL.GLU import *
 import OpenGL.GL.shaders
 import math
-import numpy
 import pyrr
+import numpy as np
 from PIL import Image
 from cubemap.SkyBox import SkyBox
 from cradleElement.CradleElement import CradleElement
 from sphere.Sphere import Sphere
-from texture.Texture import Texture
 from Camera import Camera
 
 xPosPrev = 0
@@ -53,20 +51,14 @@ glfw.set_cursor_pos_callback(window, cursorCallback)
 glfw.make_context_current(window)
 glEnable(GL_DEPTH_TEST)
 glViewport(0, 0, 1280, 720)
-# ezekre innentol nincs szukseg, mi magunk allitjuk elo a projekcios matrixot:
-#glMatrixMode(GL_PROJECTION)
-#glLoadIdentity()
-#gluPerspective(45, 1280.0 / 720.0, 0.1, 1000.0)
 
 camera = Camera(0, 0, 50)
 
 with open("./texture/vertex_shader_texture.vert") as f:
 	vertex_shader = f.read()
-	print(vertex_shader)
 
 with open("./texture/fragment_shader_texture.frag") as f:
 	fragment_shader = f.read()
-	print(fragment_shader)
 
 # A fajlbol beolvasott stringeket leforditjuk, es a ket shaderbol egy shader programot gyartunk.
 shader = OpenGL.GL.shaders.compileProgram(
@@ -93,14 +85,9 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 
 # load image
 image = Image.open("./images/wood.jpg")
-#image = image.transpose(Image.FLIP_TOP_BOTTOM)
 img_data = image.convert("RGBA").tobytes()
-# img_data = np.array(image.getdata(), np.uint8) # second way of getting the raw image data
 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width, image.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img_data)
 
-#vertCount = 6*4
-#shapeType = GL_QUADS
-#zTranslate = -50
 
 perspMat = pyrr.matrix44.create_perspective_projection_matrix(45.0, 1280.0 / 720.0, 0.1, 100.0)
 
@@ -145,7 +132,6 @@ perspMat = pyrr.matrix44.create_perspective_projection_matrix(45.0, 1280.0 / 720
 # Atadjuk az eloallitott matrixot a shader-ben levo 'projection' matrixnak
 glUniformMatrix4fv(perspectiveLocation, 1, GL_FALSE, perspMat)
 
-#cube = createObject(shader)
 
 # Init Cradle
 CradleBase = CradleElement(0, 0, 0, 25, 2, 10, lightX, lightY, lightZ)
@@ -155,18 +141,37 @@ CradleStanchion3 = CradleElement(23.5, 1.9, -8.5, 1, 20, 1, lightX, lightY, ligh
 CradleStanchion4 = CradleElement(0.5, 1.9, -8.5, 1, 20, 1, lightX, lightY, lightZ)
 CradleStanchion5 = CradleElement(0.5, 21, -0.5, 24, 1, 1, lightX, lightY, lightZ)
 CradleStanchion6 = CradleElement(0.5, 21, -8.5, 24, 1, 1, lightX, lightY, lightZ)
-#CradleStanchion7 = CradleElement(6.5, 21, -5, 2, 2, 2)
 
 # Init Spheres
 NUMBER_OF_SPHERES = 4
 SPHERE_R = 2
+G = 9.8
+LENGTH = 14
+INITIAL_ANGLE = 0.8
+spheres = []
 spheres = [
 	{"sphere": Sphere(2, -5, lightX, lightY, lightZ),
-	 "x": 6.5 + i * (SPHERE_R*2),
-	 "y": 8,
-	 "rot_x": 6.5 + i * (SPHERE_R*2),
-	 "rot_y": 21} for i in range(NUMBER_OF_SPHERES)] 
+	 "x": LENGTH*np.sin(0) + (25/2 -NUMBER_OF_SPHERES/2*SPHERE_R-SPHERE_R) + i * (SPHERE_R*2),
+	 "y": -LENGTH*np.cos(0) + 21,
+	 "axis_x": (25/2 -NUMBER_OF_SPHERES/2*SPHERE_R-SPHERE_R) + i * (SPHERE_R*2),
+	 "axis_y": 21} for i in range(NUMBER_OF_SPHERES)] 
 
+
+def position(right, t):
+    #theta(t) = theta 0*cos(sqrt(g/L)*t)
+    theta = INITIAL_ANGLE*np.cos((G/LENGTH)**(1/2)*t)
+ 
+    if not right:
+        spheres[0]["x"] = LENGTH * np.sin(theta) + spheres[0]["axis_x"]  
+        spheres[0]["y"] = -LENGTH * np.cos(theta) + spheres[0]["axis_y"]
+    else:
+        spheres[-1]["x"] = LENGTH * np.sin(theta) + spheres[-1]["axis_x"]  
+        spheres[-1]["y"] = -LENGTH * np.cos(theta) + spheres[-1]["axis_y"]
+ 
+    if theta <= 0:
+        return False 
+    else:
+        return True
 
 def cradleRender() -> None:
 	CradleBase.render(camera, perspMat)
@@ -179,7 +184,8 @@ def cradleRender() -> None:
 
 
 viewMat = pyrr.matrix44.create_look_at([0.0, 0.0, 0.0], [0.0, 0.0, -1.0], [0.0, 1.0, 0.0])
-angle = 0.0
+i = 0.0
+right = True
 
 while not glfw.window_should_close(window) and not exitProgram:
 	glfw.poll_events()
@@ -198,62 +204,22 @@ while not glfw.window_should_close(window) and not exitProgram:
 	glClearColor(0, 0.1, 0.1, 1)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT )
 
-	#transMat = pyrr.matrix44.create_from_translation(pyrr.Vector3([0, 0, 0.0]))
-	#rotMatY = pyrr.matrix44.create_from_y_rotation(math.radians(angle*0))
-	#rotMatX = pyrr.matrix44.create_from_x_rotation(math.radians(angle))
-	#rotMat = pyrr.matrix44.multiply(rotMatY, rotMatX)
-	#modelMat = pyrr.matrix44.multiply(rotMat, transMat)
-
 	# Render
 	skyBox.render(perspMat, camera.getMatrixForCubemap())
 	cradleRender()
 	for s in spheres:
-		x = 14 * math.cos(angle*2*math.pi/32) + s["rot_x"]
-		y = 14 * math.sin(angle*2*math.pi/32) + s["rot_y"]
-		print(x,y)
-		s["sphere"].render(camera, perspMat, x, y)
+		s["sphere"].render(camera, perspMat, s["x"], s["y"])
 
-	# Ez a world helyett
-	pyrr.matrix44.create_identity()
 
 	glUseProgram(shader)
-	# Innentol kezdve ezekre se lesz szukseg, megoldjuk mashogy:
-	#glMatrixMode(GL_MODELVIEW)
-	#glLoadIdentity()
-	#transMat = pyrr.matrix44.create_from_translation(pyrr.Vector3([0, 0, zTranslate]))
-	#rotMatY = pyrr.matrix44.create_from_y_rotation(math.radians(angle*0))
-	#rotMatX = pyrr.matrix44.create_from_x_rotation(math.radians(angle))
-	#rotMat = pyrr.matrix44.multiply(rotMatY, rotMatX)
-	
-	# vagy akar a glRotatef-et is helyettesithetjuk
-	# FONTOS!! A Vector3 konstruktoraban lathato szamok lebegopontosak legyenek, azaz 
-	# mindenkeppen szerepeljen bennuk egy . is, vagy .0 vegzodes (meg ha egeszeket is adunk meg),
-	# kulonben hibas lesz a matrix.
-
-	#rotMat = pyrr.matrix44.create_from_axis_rotation(pyrr.Vector3([1., 1., 1.0]), math.radians(angle))
-	
-	# Ez hibas... just Python things :(
-	#rotMat = pyrr.matrix44.create_from_axis_rotation(pyrr.Vector3([1, 1, 1]), math.radians(angle))
-
-	# Ezekre se lesz szukseg, megoldjuk mashogy:
-	#glTranslatef(0, 0, -50)
-	#glScalef(0.1, 0.1, 0.1)
-	#glRotatef(angle, 1, 1, 1)
-	angle += -0.05
+	right = position(right, i)
+	i += 0.037
 
 	glUniform3f(viewPos_loc, camera.x, camera.y, camera.z )	
-
-	#modelMat = pyrr.matrix44.multiply(rotMat, transMat)
-	#glUniformMatrix4fv(worldLocation, 1, GL_FALSE, modelMat )
-	#glUniformMatrix4fv(viewLocation, 1, GL_FALSE, camera.getMatrix() )
-
-	#viewWorldMatrix = pyrr.matrix44.multiply(modelMat, camera.getMatrix())
-	#glUniformMatrix4fv(viewWorldLocation, 1, GL_FALSE, viewWorldMatrix)
 
 	skybox_loc = glGetUniformLocation(shader, "skybox")
 	glUniform1i(skybox_loc, 0)
 	skyBox.activateCubeMap(shader, 1)
-	#renderModel(cube, vertCount, shapeType)
 
 	glfw.swap_buffers(window)
 	
