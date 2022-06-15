@@ -147,7 +147,7 @@ NUMBER_OF_SPHERES = 4
 SPHERE_R = 2
 G = 9.8
 LENGTH = 14
-INITIAL_ANGLE = 0.8
+angle = 0.8
 spheres = []
 spheres = [
 	{"sphere": Sphere(2, -5, lightX, lightY, lightZ),
@@ -159,7 +159,7 @@ spheres = [
 
 def position(right, t):
     #theta(t) = theta 0*cos(sqrt(g/L)*t)
-    theta = INITIAL_ANGLE*np.cos((G/LENGTH)**(1/2)*t)
+    theta = angle*np.cos((G/LENGTH)**(1/2)*t)
  
     if not right:
         spheres[0]["x"] = LENGTH * np.sin(theta) + spheres[0]["axis_x"]  
@@ -214,6 +214,9 @@ while not glfw.window_should_close(window) and not exitProgram:
 	glUseProgram(shader)
 	right = position(right, i)
 	i += 0.037
+
+	if angle > 0:
+		angle -= 0.0001
 
 	glUniform3f(viewPos_loc, camera.x, camera.y, camera.z )	
 
