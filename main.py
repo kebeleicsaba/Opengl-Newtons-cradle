@@ -132,7 +132,6 @@ perspMat = pyrr.matrix44.create_perspective_projection_matrix(45.0, 1280.0 / 720
 # Atadjuk az eloallitott matrixot a shader-ben levo 'projection' matrixnak
 glUniformMatrix4fv(perspectiveLocation, 1, GL_FALSE, perspMat)
 
-
 # Init Cradle
 CradleBase = CradleElement(0, 0, 0, 25, 2, 10, lightX, lightY, lightZ)
 CradleStanchion1 = CradleElement(0.5, 1.9, -0.5, 1, 20, 1, lightX, lightY, lightZ)
@@ -142,20 +141,27 @@ CradleStanchion4 = CradleElement(0.5, 1.9, -8.5, 1, 20, 1, lightX, lightY, light
 CradleStanchion5 = CradleElement(0.5, 21, -0.5, 24, 1, 1, lightX, lightY, lightZ)
 CradleStanchion6 = CradleElement(0.5, 21, -8.5, 24, 1, 1, lightX, lightY, lightZ)
 
+def cradleRender() -> None:
+	CradleBase.render(camera, perspMat)
+	CradleStanchion1.render(camera, perspMat)
+	CradleStanchion2.render(camera, perspMat)
+	CradleStanchion3.render(camera, perspMat)
+	CradleStanchion4.render(camera, perspMat)
+	CradleStanchion5.render(camera, perspMat)
+	CradleStanchion6.render(camera, perspMat)
+
 # Init Spheres
 NUMBER_OF_SPHERES = 4
 SPHERE_R = 2
 G = 9.8
 LENGTH = 14
 angle = 0.8
-spheres = []
 spheres = [
 	{"sphere": Sphere(2, -5, lightX, lightY, lightZ),
-	 "x": LENGTH*np.sin(0) + (25/2 -NUMBER_OF_SPHERES/2*SPHERE_R-SPHERE_R) + i * (SPHERE_R*2),
-	 "y": -LENGTH*np.cos(0) + 21,
+	 "x": (25/2 -NUMBER_OF_SPHERES/2*SPHERE_R-SPHERE_R) + i * (SPHERE_R*2),
+	 "y": -LENGTH + 21,
 	 "axis_x": (25/2 -NUMBER_OF_SPHERES/2*SPHERE_R-SPHERE_R) + i * (SPHERE_R*2),
 	 "axis_y": 21} for i in range(NUMBER_OF_SPHERES)] 
-
 
 def position(right, t):
     #theta(t) = theta 0*cos(sqrt(g/L)*t)
@@ -173,15 +179,9 @@ def position(right, t):
     else:
         return True
 
-def cradleRender() -> None:
-	CradleBase.render(camera, perspMat)
-	CradleStanchion1.render(camera, perspMat)
-	CradleStanchion2.render(camera, perspMat)
-	CradleStanchion3.render(camera, perspMat)
-	CradleStanchion4.render(camera, perspMat)
-	CradleStanchion5.render(camera, perspMat)
-	CradleStanchion6.render(camera, perspMat)
-
+def spheresRender():
+    for s in spheres:
+        s["sphere"].render(camera, perspMat, s["x"], s["y"])
 
 viewMat = pyrr.matrix44.create_look_at([0.0, 0.0, 0.0], [0.0, 0.0, -1.0], [0.0, 1.0, 0.0])
 i = 0.0
@@ -207,9 +207,7 @@ while not glfw.window_should_close(window) and not exitProgram:
 	# Render
 	skyBox.render(perspMat, camera.getMatrixForCubemap())
 	cradleRender()
-	for s in spheres:
-		s["sphere"].render(camera, perspMat, s["x"], s["y"])
-
+	spheresRender()
 
 	glUseProgram(shader)
 	right = position(right, i)
