@@ -70,8 +70,8 @@ shader = OpenGL.GL.shaders.compileProgram(
 
 exitProgram = False
 
-skyBox = SkyBox("./images/right.jpg", "./images/left.jpg", "./images/top.jpg", 
-				"./images/bottom.jpg", "./images/front.jpg", "./images/back.jpg")
+skyBox = SkyBox("./images/right.png", "./images/left.png", "./images/top.png", 
+				"./images/bottom.png", "./images/front.png", "./images/back.png")
 
 texture = glGenTextures(1)
 glBindTexture(GL_TEXTURE_2D, texture)
