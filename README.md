@@ -1,1 +1,3 @@
-# Opengl-2022-Newton-s-cradle
+# Opengl-2022-Newtons-cradle
+
+![Alt Text](./demo.gif)
