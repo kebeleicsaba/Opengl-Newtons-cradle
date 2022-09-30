@@ -9,7 +9,7 @@ import numpy as np
 from PIL import Image
 from cubemap.SkyBox import SkyBox
 from cradleElement.CradleElement import CradleElement
-from sphere.Sphere import Sphere
+from Sphere import Sphere
 from Camera import Camera
 
 xPosPrev = 0

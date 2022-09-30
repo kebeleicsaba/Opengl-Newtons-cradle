@@ -8,9 +8,9 @@ import pyrr
 
 class Sphere:
     def setShaders(self):
-        with open("./sphere/vertex_shader_sphere.vert") as f:
+        with open("./cradleElement/vertex_shader_cradleElement.vert") as f:
             vertex_shader = f.read()
-        with open("./sphere/fragment_shader_sphere.frag") as f:
+        with open("./cradleElement/fragment_shader_cradleElement.frag") as f:
             fragment_shader = f.read()
 
         self.shader = OpenGL.GL.shaders.compileProgram(

@@ -20,8 +20,7 @@ uniform vec3 viewPos;
 
 uniform sampler2D textureSampler;
 
-void main()
-{    
+void main() {    
 vec3 ambient = materialAmbientColor * lightAmbientColor; 
 
     vec3 normal = normalize(v_normal);
